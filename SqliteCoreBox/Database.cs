@@ -16,11 +16,11 @@
             }
         }
 
+        public DbSet<Foo> Foos { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder builder)
         {
             builder.UseSqlite($"Data Source={FileName}");
         }
- 
-        public DbSet<Foo> Foos { get; set; }
     }
 }
