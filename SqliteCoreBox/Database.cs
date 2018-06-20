@@ -7,6 +7,7 @@
     {
         public static readonly string FileName = Path.GetFullPath("test.db");
 
+        public static readonly string ConnectionString = $"Data Source={FileName}";
         public Database()
         {
             if (!File.Exists(FileName))
@@ -20,7 +21,7 @@
 
         protected override void OnConfiguring(DbContextOptionsBuilder builder)
         {
-            builder.UseSqlite($"Data Source={FileName}");
+            builder.UseSqlite(ConnectionString);
         }
     }
 }
