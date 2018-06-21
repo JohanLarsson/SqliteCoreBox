@@ -11,6 +11,7 @@
     {
         internal static void Run()
         {
+            Console.WriteLine(nameof(SelectAllBenchmark));
             if (File.Exists(Database.FileName))
             {
                 File.Delete(Database.FileName);
@@ -26,22 +27,49 @@
                 db.SaveChanges();
             }
 
-            Console.WriteLine("EF");
             Ef();
-            Console.WriteLine("EF");
             Ef();
-            Console.WriteLine("ADO");
+            EfInMemory();
             Ado();
-            Console.WriteLine("ADO");
             Ado();
         }
 
         internal static void Ef()
         {
+            Console.WriteLine("EF");
             using (var db = new Database())
             {
                 var sw = Stopwatch.StartNew();
                 var foos = db.Foos.ToList();
+                sw.Stop();
+                Console.WriteLine($"Selecting {foos.Count} items took {sw.ElapsedMilliseconds:N1} ms.");
+
+                sw.Restart();
+                foos = db.Foos.ToList();
+                sw.Stop();
+                Console.WriteLine($"Selecting {foos.Count} items took {sw.ElapsedMilliseconds:N1} ms.");
+            }
+        }
+
+        internal static void EfInMemory()
+        {
+            Console.WriteLine("EF in memory");
+            using (var db = new InMemory())
+            {
+                db.AddRange(
+                    new Foo { Text = "1" },
+                    new Foo { Text = "2" },
+                    new Foo { Text = "3" },
+                    new Foo { Text = "4" });
+                db.SaveChanges();
+
+                var sw = Stopwatch.StartNew();
+                var foos = db.Foos.ToList();
+                sw.Stop();
+                Console.WriteLine($"Selecting {foos.Count} items took {sw.ElapsedMilliseconds:N1} ms.");
+
+                sw.Restart();
+                foos = db.Foos.ToList();
                 sw.Stop();
                 Console.WriteLine($"Selecting {foos.Count} items took {sw.ElapsedMilliseconds:N1} ms.");
             }
@@ -49,11 +77,17 @@
 
         internal static void Ado()
         {
+            Console.WriteLine("ADO");
             using (var db = new SqliteConnection(Database.ConnectionString))
             {
                 var sw = Stopwatch.StartNew();
                 db.Open();
                 var foos = db.Select().ToList();
+                sw.Stop();
+                Console.WriteLine($"Selecting {foos.Count} items took {sw.ElapsedMilliseconds:N1} ms.");
+
+                sw.Restart();
+                foos = db.Select().ToList();
                 sw.Stop();
                 Console.WriteLine($"Selecting {foos.Count} items took {sw.ElapsedMilliseconds:N1} ms.");
             }

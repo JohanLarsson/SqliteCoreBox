@@ -6,10 +6,8 @@
     {
         static void Main()
         {
-            Console.WriteLine(nameof(SelectAllBenchmark));
             SelectAllBenchmark.Run();
-
-            Console.WriteLine(nameof(SelectByIndexBenchmark));
+            Console.WriteLine();
             SelectByIndexBenchmark.Run();
         }
     }
